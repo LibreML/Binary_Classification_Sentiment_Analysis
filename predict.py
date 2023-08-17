@@ -1,6 +1,10 @@
 import pickle
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+from config import load_config
+
+# Load configuration from TOML
+VOCAB_SIZE, MAX_LENGTH = load_config()
 
 def load_resources(model_path, tokenizer_path):
     # Load the pretrained model
@@ -14,7 +18,7 @@ def load_resources(model_path, tokenizer_path):
 
 def encode_text(text, tokenizer):
     sequences = tokenizer.texts_to_sequences([text])
-    return pad_sequences(sequences, maxlen=250, padding='post', truncating='post')
+    return pad_sequences(sequences, maxlen=MAX_LENGTH, padding='post', truncating='post')
 
 def predict(text, model_path, tokenizer_path):
     # Load model and tokenizer

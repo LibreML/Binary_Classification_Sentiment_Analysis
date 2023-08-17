@@ -1,15 +1,16 @@
 import pandas as pd
 import re
+import tomllib
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 import pickle
-import tomllib
 
 # Define constants and paths
-INPUT_FILES = ["combined_reviews_1000000.csv"]
+INPUT_FILES = ["combined_reviews_100000.csv"]
 DATASET_DIRECTORY = "./datasets/aligned/"
-OUTPUT_FILE = './datasets/preprocessed/preproc_combined_reviews_1m.csv'
-TOKENIZER_FILE = './tokenizers/BiLSTM_tokenizer_1m.pickle'
+OUTPUT_FILE = './datasets/preprocessed/preproc_combined_reviews_100k.csv'
+TOKENIZER_FILE = './tokenizers/BiLSTM_tokenizer_100k.pickle'
+CONFIG_FILE = './config.toml'  # Path to your config.toml file
 
 # Text cleaning function
 def clean_text(text):
@@ -34,14 +35,26 @@ combined_data = combined_data.sample(frac=1).reset_index(drop=True)
 combined_data['text'] = combined_data['text'].apply(clean_text)
 
 # Tokenize the reviews
-vocab_size = 20_000
-max_length = 250
-
-tokenizer = Tokenizer(num_words=vocab_size, oov_token="<UNK>")
+tokenizer = Tokenizer(oov_token="<UNK>")
 tokenizer.fit_on_texts(combined_data['text'])
 sequences = tokenizer.texts_to_sequences(combined_data['text'])
 
-# Pad the sequences
+# Compute the average sequence length
+max_length = max(map(len, sequences))
+
+# Load configuration from config.toml file
+with open(CONFIG_FILE, 'rb') as config_file:
+    config = tomllib.load(config_file)
+
+# Update the configuration with the computed average length
+config['MAX_LENGTH'] = max_length
+
+# Write the updated configuration back to the config.toml file
+with open(CONFIG_FILE, 'w') as config_file:
+    for key, value in config.items():
+        config_file.write(f"{key} = {value}\n")
+
+# Pad the sequences using the updated average length
 padded_data = pad_sequences(sequences, maxlen=max_length, padding='post', truncating='post')
 
 # Convert the preprocessed data to a DataFrame

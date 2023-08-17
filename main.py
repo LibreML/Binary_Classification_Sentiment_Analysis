@@ -62,7 +62,7 @@ class SentimentApp:
         self.predict_btn.pack(pady=20)
 
     def update_sentiment(self):
-        text_input = self.textbox.get(1.0, tk.END).strip()
+        text_input = self.textbox.get(1.0, tk.END).strip().lower()
         sentiment, probability = predict(text_input, self.model_path, self.tokenizer_path)
         if sentiment == 1:
             self.emoji_label.config(text="😊")

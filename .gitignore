@@ -8,3 +8,7 @@ imdb_reviews
 .json
 *.json
 __pycache__
+*.png
+.png
+*.h5
+.h5
