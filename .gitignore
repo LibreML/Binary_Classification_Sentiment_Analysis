@@ -7,3 +7,4 @@ metrics/*.png
 imdb_reviews
 .json
 *.json
+__pycache__

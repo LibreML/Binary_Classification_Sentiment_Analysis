@@ -26,7 +26,7 @@ data_train, data_test, label_train, label_test = train_test_split(
 )
 
 # Define constants
-VOCAB_SIZE = 10000
+VOCAB_SIZE = 20000
 MAX_LENGTH = 250
 
 # Convert data into a format suitable for training

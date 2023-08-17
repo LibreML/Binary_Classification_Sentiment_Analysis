@@ -2,26 +2,35 @@ import pickle
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
-# Load the pretrained model
-model_path = './models/sentiment_model_BiLSTM_5e_89acc_0.27loss_16_embedding.keras'
-model = load_model(model_path)
+def load_resources(model_path, tokenizer_path):
+    # Load the pretrained model
+    model = load_model(model_path)
 
-# Load the tokenizer
-with open('./tokenizers/sentiment_analysis/lstm_tokenizer_100k.pickle', 'rb') as handle:
-    tokenizer = pickle.load(handle)
+    # Load the tokenizer
+    with open(tokenizer_path, 'rb') as handle:
+        tokenizer = pickle.load(handle)
+    
+    return model, tokenizer
 
-def encode_text(text):
+def encode_text(text, tokenizer):
     sequences = tokenizer.texts_to_sequences([text])
     return pad_sequences(sequences, maxlen=250, padding='post', truncating='post')
 
-text = "The movie was great! But i did not like the plot twist.".lower()
+def predict(text, model_path, tokenizer_path):
+    # Load model and tokenizer
+    model, tokenizer = load_resources(model_path, tokenizer_path)
+    
+    # Convert the text into tokenized and padded sequence
+    encoded_text = encode_text(text, tokenizer)
 
-# Convert the text into tokenized and padded sequence
-encoded_text = encode_text(text)
+    # Make predictions
+    prediction = model.predict(encoded_text)
 
-# Make predictions
-prediction = model.predict(encoded_text)
+    sentiment = 1 if prediction[0][0] >= 0.5 else 0
 
-sentiment = "positive" if prediction[0][0] >= 0.5 else "negative"
+    return sentiment, int(float(f"{prediction[0][0]:.2f}")*100)
 
-print(f"Sentiment: {sentiment}, Probability: {prediction[0][0]:.2f}")
+# Sample usage
+if __name__ == "__main__":
+    result = predict("The movie was great! But I did not like the plot twist.", './models/sentiment_model_BiLSTM_5e_89acc_0.27loss_16_embedding.keras', './tokenizers/sentiment_analysis/lstm_tokenizer_100k.pickle')
+    print(result)

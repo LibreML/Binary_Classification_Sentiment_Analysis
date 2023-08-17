@@ -18,7 +18,7 @@ Secondly obtain the Yelp Reviews Dataset, you can do this by:
 3. Click Download
 4. Click on Download JSON
 5. Unzip the Dataset
-6. Copy the `review.json` to the `datasets/raw` folder in the repo. And rename the file `yelp_academic_dataset_review.json` file to `yelp_reviews.json`
+6. Copy the `yelp_academic_dataset_review.json` to the `datasets/raw` folder in the repo. And rename the file `yelp_academic_dataset_review.json` file to `yelp_reviews.json`
 7. Now you have your Yelp dataset in place. good job!
 
 # Aligning the datasets
@@ -26,11 +26,10 @@ Next we need to combine these datasets into a CSV file with 2 fields, `text` and
 
 1. Run the `prep_imdb_reviews.py` file in the `prepare_datasets` directory.
 2. Run the `prep_yelp_reviews.py` file in the `prepare_datasets` directory.
-3. Run the `sample_datasets.py` file in the `prepare_datasets` directory, this will make a combined CSV file with the data inside, feel free to tweak the `TARGET_SAMPLE_SIZE` to whatever you wish(as long as the dataset is big enough), its just the number of entries it will try and put into the final file.
 
 # Combining the datasets
 Next we need to combine the datasets into a single file.
-1. Run the `sample_from_dataset.py` file
+1. Run the `sample_from_datasets.py` file in the `prepare_datasets` directory, this will make a combined CSV file with the data inside, feel free to tweak the `TARGET_SAMPLE_SIZE` to whatever you wish(as long as the dataset is big enough), its just the number of entries it will try and put into the final file.
 2. Now you have a combined dataset
 
 # Preproccessing the datasets

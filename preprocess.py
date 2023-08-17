@@ -6,10 +6,10 @@ import pickle
 import tomllib
 
 # Define constants and paths
-INPUT_FILES = ["combined_reviews_100000.csv"]
+INPUT_FILES = ["combined_reviews_1000000.csv"]
 DATASET_DIRECTORY = "./datasets/aligned/"
-OUTPUT_FILE = './datasets/preprocessed/preproc_combined_reviews_100k.csv'
-TOKENIZER_FILE = './tokenizers/sentiment_analysis/BiLSTM_tokenizer_100k.pickle'
+OUTPUT_FILE = './datasets/preprocessed/preproc_combined_reviews_1m.csv'
+TOKENIZER_FILE = './tokenizers/BiLSTM_tokenizer_1m.pickle'
 
 # Text cleaning function
 def clean_text(text):
