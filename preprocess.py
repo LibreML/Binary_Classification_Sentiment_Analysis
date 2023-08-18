@@ -40,7 +40,7 @@ tokenizer.fit_on_texts(combined_data['text'])
 sequences = tokenizer.texts_to_sequences(combined_data['text'])
 
 # Compute the average sequence length
-max_length = max(map(len, sequences))
+max_length  = 250 #int(sum(map(len, sequences)) / len(sequences))
 
 # Load configuration from config.toml file
 with open(CONFIG_FILE, 'rb') as config_file:

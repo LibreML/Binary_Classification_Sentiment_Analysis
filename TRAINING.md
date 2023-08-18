@@ -37,6 +37,11 @@ Next we need to preproccess the datasets so it can be used for training.
 1. Run the `preprocess.py file`
 2. Now you have a preproccessed dataset, and a tokenizer(in the tokenizer directory), which we will use later.
 
+# Installing the Embeddings
+Now you need to download some pretrained embeddings, we are using GloVe for this project.
+1. Download the `840B tokens` model, from (HERE)[https://nlp.stanford.edu/projects/glove/]
+2. Extract the compressed file and put the txt file in `./datasets/raw`.
+
 # Training the Model
 Now we need to train the model to get it output as a file.
 1. Run the `train.py` file

@@ -3,7 +3,7 @@ import os
 
 # Constants
 DATASETS_DIR = "./datasets/aligned/"
-TARGET_SAMPLE_SIZE = 500_000  # or whatever size you desire
+TARGET_SAMPLE_SIZE = 3_000_000  # or whatever size you desire
 
 # Manually define the list of dataset files
 dataset_files = ['imdb_reviews.csv', 'yelp_reviews.csv']  # add other filenames as needed

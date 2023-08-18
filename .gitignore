@@ -12,3 +12,5 @@ __pycache__
 .png
 *.h5
 .h5
+*.txt
+.txt

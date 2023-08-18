@@ -2,3 +2,4 @@ tensorflow
 matplotlib
 pandas
 scikit-learn
+numpy
