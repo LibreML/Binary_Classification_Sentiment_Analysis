@@ -17,6 +17,30 @@ It has wide applications, including but not limited to:
 # Training
 Visit the [Training](./TRAINING.md) section to learn how to train your own models.
 
+# Using the program
+
+## Downloading and using the repo
+```bash
+git clone https://github.com/LibreML/Binary_Classification_Sentiment_Analysis
+cd Binary_Classification_Sentiment_Analysis
+```
+
+## Setting up the environment
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+## Installing the dependencies
+```bash
+pip3 install -r requirements.txt
+```
+
+## Running the program
+```bash
+python3 main.py
+```
+
 # License
 
 In this section we detail the licences used for this software
