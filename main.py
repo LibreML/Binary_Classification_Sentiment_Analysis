@@ -1,6 +1,12 @@
 import tkinter as tk
 from tkinter import filedialog
 from predict import predict
+import tomllib
+
+with open("./config.toml", 'rb') as config_file:
+    config = tomllib.load(config_file)
+
+MAX_LENGTH = config.get("MAX_LENGTH", 250)
 
 class SentimentApp:
     def __init__(self, master):
@@ -54,7 +60,7 @@ class SentimentApp:
         self.textbox.bind("<Key>", self.limit_characters)
 
         # Counter label
-        self.counter_label = tk.Label(self.master, text="0/250 characters", font=("Arial", 12))
+        self.counter_label = tk.Label(self.master, text=f"0/{MAX_LENGTH} characters", font=("Arial", 12))
         self.counter_label.pack()
 
         # Predict button
@@ -73,13 +79,13 @@ class SentimentApp:
 
     def limit_characters(self, event):
         # Limit the characters to 250 and allow only backspace and delete after that
-        if len(self.textbox.get(1.0, tk.END)) - 1 > 250:
+        if len(self.textbox.get(1.0, tk.END)) - 1 > MAX_LENGTH:
             if event.keysym != "BackSpace" and event.keysym != "Delete":
                 return "break"
 
         # Update character counter
         text_length = len(self.textbox.get(1.0, tk.END)) - 1  # Subtract 1 for the newline character
-        self.counter_label.config(text=f"{text_length}/250 characters")
+        self.counter_label.config(text=f"{text_length}/{MAX_LENGTH} characters")
 
 if __name__ == "__main__":
     root = tk.Tk()

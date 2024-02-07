@@ -6,10 +6,10 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 import pickle
 
 # Define constants and paths
-INPUT_FILES = ["combined_reviews_100000.csv"]
+INPUT_FILES = ["combined_reviews_500000.csv"]
 DATASET_DIRECTORY = "./datasets/aligned/"
-OUTPUT_FILE = './datasets/preprocessed/preproc_combined_reviews_100k.csv'
-TOKENIZER_FILE = './tokenizers/BiLSTM_tokenizer_100k.pickle'
+OUTPUT_FILE = './datasets/preprocessed/preproc_combined_reviews_500k.csv'
+TOKENIZER_FILE = './tokenizers/MLBiLSTM_tokenizer_500k.pickle'
 CONFIG_FILE = './config.toml'  # Path to your config.toml file
 
 # Text cleaning function
@@ -40,7 +40,7 @@ tokenizer.fit_on_texts(combined_data['text'])
 sequences = tokenizer.texts_to_sequences(combined_data['text'])
 
 # Compute the average sequence length
-max_length  = 250 #int(sum(map(len, sequences)) / len(sequences))
+max_length = 250 #int(sum(map(len, sequences)) / len(sequences))
 
 # Load configuration from config.toml file
 with open(CONFIG_FILE, 'rb') as config_file:

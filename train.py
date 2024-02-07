@@ -14,6 +14,32 @@ from tensorflow.keras.metrics import Precision, Recall
 from metrics import metrics
 from config import load_config
 import time
+from tensorflow.keras.layers import Layer
+import tensorflow.keras.backend as K
+
+class Attention(Layer):
+    def __init__(self, **kwargs):
+        super(Attention, self).__init__(**kwargs)
+
+    def build(self, input_shape):
+        self.W = self.add_weight(name='att_weight',
+                                 shape=(input_shape[-1], 1),
+                                 initializer='normal')
+        self.b = self.add_weight(name='att_bias',
+                                 shape=(input_shape[1], 1),
+                                 initializer='zeros')
+        super(Attention, self).build(input_shape)
+
+    def call(self, x):
+        et = K.squeeze(K.tanh(K.dot(x, self.W) + self.b), axis=-1)
+        at = K.softmax(et)
+        at = K.expand_dims(at, axis=-1)
+        output = x * at
+        return K.sum(output, axis=1)
+
+    def compute_output_shape(self, input_shape):
+        return (input_shape[0], input_shape[-1])
+
 
 # Load GloVe embeddings
 def load_glove_embeddings(filename):
@@ -49,7 +75,7 @@ class MetricsCheckpoint(Callback):
 VOCAB_SIZE, MAX_LENGTH = load_config()
 
 # Load preprocessed data
-data_path = './datasets/preprocessed/preproc_combined_reviews_100k.csv'
+data_path = './datasets/preprocessed/preproc_combined_reviews_500k.csv'
 data = pd.read_csv(data_path)
 
 # Tokenize the data
@@ -83,14 +109,18 @@ model = Sequential([
               output_dim=EMBEDDING_DIM,
               weights=[embedding_matrix],
               input_length=MAX_LENGTH,
-              trainable=False),
+              trainable=False,
+              mask_zero=True),
     Dropout(0.5),
     Bidirectional(LSTM(32, return_sequences=True, recurrent_dropout=0.5, kernel_regularizer=regularizers.l2(0.01))),
+    SimpleAttention(),
     Dropout(0.5),
     Bidirectional(LSTM(32, recurrent_dropout=0.5, kernel_regularizer=regularizers.l2(0.01))),
     Dropout(0.5),
     Dense(1, activation='sigmoid')
 ])
+
+
 
 # Metrics
 precision = Precision(name='precision')
@@ -100,14 +130,14 @@ recall = Recall(name='recall')
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy', precision, recall])
 
 # Early stopping
-early_stopping = EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)
+early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
 
 # Model Checkpoint
-checkpoint_path = './models/checkpoints/Multilayer_Bidirectional_LSTM_ep{epoch:03d}_acc{accuracy:.4f}_loss{loss:.4f}_valAcc{val_accuracy:.4f}_valLoss{val_loss:.4f}_dataset_100k.h5'
+checkpoint_path = './models/checkpoints/Multilayer_Bidirectional_LSTM_ep{epoch:03d}_acc{accuracy:.4f}_loss{loss:.4f}_valAcc{val_accuracy:.4f}_valLoss{val_loss:.4f}_dataset_500k_With_Attention.h5'
 checkpoint = ModelCheckpoint(checkpoint_path, monitor='val_accuracy', verbose=1, save_best_only=True, mode='max', save_format='h5')
 
 # Add MetricsCheckpoint callback
-metrics_checkpoint = MetricsCheckpoint('MLBiLSTM')
+metrics_checkpoint = MetricsCheckpoint('MLBiLSTM-With_Attention')
 
 # Train the model with the added ModelCheckpoint and MetricsCheckpoint callbacks
 history = model.fit(data_train, label_train, epochs=100, batch_size=512, validation_split=0.2, callbacks=[early_stopping, checkpoint, metrics_checkpoint])
