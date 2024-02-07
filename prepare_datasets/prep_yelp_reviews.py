@@ -1,15 +1,13 @@
 import re
 import pandas as pd
-import os
 
 # Constants
 DATASET_PATH = './datasets/raw/yelp_reviews.json'
 ALIGNED_OUTPUT_PATH = './datasets/aligned/yelp_reviews.csv'
-SENTIMENT_THRESHOLD = 3  # Reviews with stars greater than this threshold will be considered positive
 
 def clean_text(text):
     """Clean the text data using regex."""
-    text = re.sub(r"<br />", " ", text) 
+    text = re.sub(r"<br />", " ", text)
     text = re.sub('[^a-zA-Z]', ' ', text)
     return text
 
@@ -19,10 +17,13 @@ data = pd.read_json(DATASET_PATH, lines=True)
 # Clean the text
 data['text'] = data['text'].apply(clean_text)
 
-# Convert stars to binary sentiment: 1 for positive and 0 for negative
-data['sentiment'] = data['stars'].apply(lambda star: 1 if star > SENTIMENT_THRESHOLD else 0)
+# Remove 3-star reviews
+data = data[data['stars'] != 3]
 
-# Drop unnecessary columns
+# Convert stars to binary sentiment: 1 for positive (4-5 stars) and 0 for negative (1-2 stars)
+data['sentiment'] = data['stars'].apply(lambda star: 1 if star > 3 else 0)
+
+# Drop unnecessary columns to keep only 'text' and 'sentiment'
 processed_data = data[['text', 'sentiment']]
 
 # Shuffle the processed data using the sample function

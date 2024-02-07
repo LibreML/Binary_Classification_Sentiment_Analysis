@@ -3,7 +3,7 @@ import os
 
 # Constants
 DATASETS_DIR = "./datasets/aligned/"
-TARGET_SAMPLE_SIZE = 3_000_000  # or whatever size you desire
+TARGET_SAMPLE_SIZE = 100_000  # or whatever size you desire
 
 # Manually define the list of dataset files
 dataset_files = ['imdb_reviews.csv', 'yelp_reviews.csv']  # add other filenames as needed
@@ -11,24 +11,24 @@ dataset_files = ['imdb_reviews.csv', 'yelp_reviews.csv']  # add other filenames 
 def load_and_sample_data(file_path, sample_size, random_state=42):
     """Load and sample data from the given file path."""
     data = pd.read_csv(file_path, usecols=['text', 'sentiment'])
-    
+
     # Ensure 'text' column contains strings and 'sentiment' contains integers
     data = data.dropna()
     data = data[data['text'].apply(lambda x: isinstance(x, str))]
     data = data[data['sentiment'].apply(lambda x: isinstance(x, int))]
-    
+
     # Shuffle the data
     data = data.sample(frac=1, random_state=random_state).reset_index(drop=True)
-    
+
     # Split data into positive and negative sentiments
     pos_data = data[data['sentiment'] == 1]
     neg_data = data[data['sentiment'] == 0]
-    
+
     # Sample equal amounts from both positive and negative data
     num_samples_each = sample_size // 2
     pos_sample = pos_data.head(num_samples_each)
     neg_sample = neg_data.head(num_samples_each)
-    
+
     return pd.concat([pos_sample, neg_sample], axis=0).sample(frac=1, random_state=random_state)
 
 all_samples = []
